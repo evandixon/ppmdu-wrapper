@@ -180,7 +180,7 @@ Public Class UtilityManager
             If disposing Then
                 ' TODO: dispose managed state (managed objects).
 
-                If If _toolDirectory IsNot Nothing AndAlso Directory.Exists(_toolDirectory) Then
+                If _toolDirectory IsNot Nothing AndAlso Directory.Exists(_toolDirectory) Then
                     Directory.Delete(_toolDirectory, True)
                 End If
             End If
