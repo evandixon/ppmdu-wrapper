@@ -1,8 +1,16 @@
 ﻿Imports System.IO
+Imports System.Text
 
 Public Class UtilityManager
     Implements IDisposable
 
+    Private Function AbsolutizePath(path As String) As String
+        If IO.Path.IsPathRooted(path) Then
+            Return path
+        Else
+            Return IO.Path.Combine(Environment.CurrentDirectory, path)
+        End If
+    End Function
 
 #Region "Process Running"
 
@@ -169,6 +177,46 @@ Public Class UtilityManager
         End Get
     End Property
 
+#End Region
+
+#Region "Tool Execution"
+    Public Async Function RunStatsUtil(extractedRomPath As String, xmlPath As String, options As StatsUtilOptions) As Task
+        Dim args As New StringBuilder
+
+        If options.IsImport Then
+            args.Append("-i ")
+        Else
+            args.Append("-e ")
+        End If
+
+        If options.EnablePokemon Then
+            args.Append("-pokemon ")
+        End If
+
+        If options.EnableMoves Then
+            args.Append("-moves ")
+        End If
+
+        If options.EnableItems Then
+            args.Append("-items ")
+        End If
+
+        If options.EnableScripts Then
+            args.Append("-scripts ")
+
+            If options.EnableScriptDebug Then
+                args.Append("-scriptdebug ")
+            End If
+        End If
+
+        args.Append("-romroot """)
+        args.Append(AbsolutizePath(extractedRomPath))
+        args.Append(""" """)
+        args.Append(AbsolutizePath(xmlPath))
+        args.Append("""")
+
+        Await RunProgram(Path_StatsUtil, args.ToString.Trim)
+    End Function
 #End Region
 
 #Region "IDisposable Support"
