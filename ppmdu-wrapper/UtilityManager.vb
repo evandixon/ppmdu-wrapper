@@ -217,6 +217,10 @@ Public Class UtilityManager
 
         Await RunProgram(Path_StatsUtil, args.ToString.Trim)
     End Function
+
+    Public Async Function UnPX(compressedFilename As String, outputFilename As String) As Task
+        Await RunProgram(Path_UnPX, $"-fext ""{Path.GetExtension(outputFilename).TrimStart(".")}"" ""{AbsolutizePath(compressedFilename)}"" ""{AbsolutizePath(outputFilename)}""")
+    End Function
 #End Region
 
 #Region "IDisposable Support"

@@ -121,4 +121,10 @@
   <data name="EoS_U" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\EoS-U.nds;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="EoS_U_MD5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\EoS-U-MD5;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="n_logo_MD5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\n_logo-MD5;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

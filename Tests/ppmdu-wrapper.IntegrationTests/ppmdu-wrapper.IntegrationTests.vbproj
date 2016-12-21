@@ -140,7 +140,9 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="packages.config" />
+    <None Include="Resources\EoS-U-MD5" />
     <None Include="Resources\EoS-U.nds" />
+    <None Include="Resources\n_logo-MD5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ppmdu-wrapper\ppmdu-wrapper.vbproj">
