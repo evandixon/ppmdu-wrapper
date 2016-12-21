@@ -6,8 +6,12 @@ Imports PPMDU
 
 <TestClass()> Public Class UtilityManagerTests
 
+    'Files for all tests
     Dim romFilename As String = "eos-u.nds"
     Dim romDir As String = "extractedROM"
+
+    'Files for some tests
+    Dim destDec = "nlogo-dec.bin"
 
 
     <TestInitialize()> Public Sub TestInit()
@@ -32,6 +36,10 @@ Imports PPMDU
     <TestCleanup> Public Sub Cleanup()
         File.Delete(romFilename)
         Directory.Delete(romDir, True)
+
+        If File.Exists(destDec) Then
+            File.Delete(destDec)
+        End If
     End Sub
 
     <TestMethod()> Public Sub RunStatsUtil_Extract()
@@ -50,25 +58,93 @@ Imports PPMDU
 
     End Sub
 
-    <TestMethod()> Public Sub RunUnPX()
+    <TestMethod> Public Sub RunUnPx()
         Dim source = Path.Combine(romDir, "data", "BACK", "n_logo.bgp")
-        Dim dest = "nlogo-dec.bin"
 
-        'Test
+        'Test UnPX
         Using manager As New UtilityManager
-            manager.UnPX(source, dest).Wait()
+            manager.UnPX(source, destDec).Wait()
         End Using
 
-        'Check
-        Assert.IsTrue(File.Exists(dest), "Failed to create destination file.")
+        'Check UnPX
+        Assert.IsTrue(File.Exists(destDec), "Failed to create decompressed file.")
 
         Using md5 As New MD5CryptoServiceProvider
-            Dim hash = md5.ComputeHash(File.ReadAllBytes(dest))
-            Assert.IsTrue(hash.SequenceEqual(My.Resources.n_logo_MD5))
+            Dim hash = md5.ComputeHash(File.ReadAllBytes(destDec))
+            Assert.IsTrue(hash.SequenceEqual(My.Resources.n_logo_MD5), "Uncompressed file hash mismatch")
+        End Using
+    End Sub
+
+    <TestMethod> Public Sub RunDoPxAT4PX()
+        Try
+            RunUnPx()
+        Catch ex As Exception
+            Assert.Inconclusive("Dependant test RunUnPx failed.  Message: " & ex.ToString)
+        End Try
+
+        Dim destCompAT4PX = "nlogo-at4px-comp.bin"
+        Dim destDecAT4PX = "nlogo-at4px-dec.bin"
+
+        'Test DoPX AT4PX
+        Using manager As New UtilityManager
+            manager.DoPX(destDec, destCompAT4PX, PXFormat.AT4PX).Wait()
+
+            'First DoPX AT4PX Check
+            Assert.IsTrue(File.Exists(destCompAT4PX), "Failed to create compressed AT4PX file.")
+            Dim rawData = File.ReadAllBytes(destCompAT4PX)
+            Assert.AreEqual("AT4PX", Encoding.ASCII.GetString(rawData, 0, 5))
+
+            'Prep for second check
+            manager.UnPX(destCompAT4PX, destDecAT4PX).Wait()
+        End Using
+
+        'Second DoPX AT4PX Check
+        Assert.IsTrue(File.Exists(destDecAT4PX), "Failed to create decompressed AT4PX file.")
+
+        Using md5 As New MD5CryptoServiceProvider
+            Dim hash = md5.ComputeHash(File.ReadAllBytes(destDecAT4PX))
+            Assert.IsTrue(hash.SequenceEqual(My.Resources.n_logo_MD5), "AT4PX re-uncompressed file hash mismatch")
         End Using
 
         'Cleanup
-        File.Delete(dest)
+        File.Delete(destCompAT4PX)
+        File.Delete(destDecAT4PX)
+    End Sub
+
+    <TestMethod()> Public Sub RunDoPxPKDPX()
+        Try
+            RunUnPx()
+        Catch ex As Exception
+            Assert.Inconclusive("Dependant test RunUnPx failed.  Message: " & ex.ToString)
+        End Try
+
+        Dim destCompPKDPX = "nlogo-pkdpx-comp.bin"
+        Dim destDecPKDPX = "nlogo-pkdpx-dec.bin"
+
+        'Test DoPX PKDPX
+        Using manager As New UtilityManager
+            manager.DoPX(destDec, destCompPKDPX, PXFormat.PKDPX).Wait()
+
+            'First DoPX AT4PX Check
+            Assert.IsTrue(File.Exists(destCompPKDPX), "Failed to create compressed PKDPX file.")
+            Dim rawData = File.ReadAllBytes(destCompPKDPX)
+            Assert.AreEqual("PKDPX", Encoding.ASCII.GetString(rawData, 0, 5))
+
+            'Prep for second check
+            manager.UnPX(destCompPKDPX, destDecPKDPX).Wait()
+        End Using
+
+        'Second DoPX AT4PX Check
+        Assert.IsTrue(File.Exists(destDecPKDPX), "Failed to create decompressed PKDPX file.")
+
+        Using md5 As New MD5CryptoServiceProvider
+            Dim hash = md5.ComputeHash(File.ReadAllBytes(destDecPKDPX))
+            Assert.IsTrue(hash.SequenceEqual(My.Resources.n_logo_MD5), "PKDPX re-uncompressed file hash mismatch")
+        End Using
+
+        'Cleanup
+        File.Delete(destCompPKDPX)
+        File.Delete(destDecPKDPX)
     End Sub
 
 End Class

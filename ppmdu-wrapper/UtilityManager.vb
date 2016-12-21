@@ -221,6 +221,40 @@ Public Class UtilityManager
     Public Async Function UnPX(compressedFilename As String, outputFilename As String) As Task
         Await RunProgram(Path_UnPX, $"-fext ""{Path.GetExtension(outputFilename).TrimStart(".")}"" ""{AbsolutizePath(compressedFilename)}"" ""{AbsolutizePath(outputFilename)}""")
     End Function
+
+    Dim _doPxTempDirectoryCreateLock As New Object
+    Public Async Function DoPX(uncompressedFilename As String, outputFilename As String, format As PXFormat) As Task
+        Dim tempFilename As String = Path.Combine(ToolDirectory, "DoPX-Temp-" & Guid.NewGuid.ToString)
+        Dim tempDirectory As String = Path.Combine(ToolDirectory, "Compressed")
+        Dim tempOutput As String = Path.Combine(tempDirectory, Path.GetFileName(tempFilename))
+
+        If Not Directory.Exists(tempDirectory) Then 'Check to see if the directory is missing
+            SyncLock _doPxTempDirectoryCreateLock 'Only one thread can create it
+                If Not Directory.Exists(tempDirectory) Then 'Check again in case another thread already did it
+                    Directory.CreateDirectory(tempDirectory)
+                End If
+            End SyncLock
+        End If
+
+        Select Case format
+            Case PXFormat.NotSpecified
+                tempOutput &= ".bin"
+            Case PXFormat.AT4PX
+                tempOutput &= ".at4px"
+            Case PXFormat.PKDPX
+                tempOutput &= ".pkdpx"
+            Case Else
+                Throw New NotSupportedException("Only AT4PX and PKDPX compression formats are supported.")
+        End Select
+
+        File.Copy(uncompressedFilename, tempFilename)
+
+        Await RunProgram(Path_DoPX, $"""{tempFilename}"" ""{tempOutput}""")
+
+        File.Copy(tempOutput, outputFilename, True)
+
+        File.Delete(tempFilename)
+    End Function
 #End Region
 
 #Region "IDisposable Support"
