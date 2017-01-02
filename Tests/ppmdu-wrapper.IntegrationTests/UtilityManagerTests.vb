@@ -147,4 +147,96 @@ Imports PPMDU
         File.Delete(destDecPKDPX)
     End Sub
 
+    <TestMethod> Public Sub RunKaoUtil_BMP()
+        Dim kaomadoFilename = Path.Combine(romDir, "data", "font", "kaomado.kao")
+        Dim kaomadoExtractPath = "kao_bmp"
+        Dim repackPath = "repackedKaomato_bmp.kao"
+        Dim repackExtractPath = "kao_bmp2"
+
+        'Extract
+        Using manager As New UtilityManager
+            manager.RunKaoUtil(kaomadoFilename, kaomadoExtractPath, True).Wait()
+        End Using
+
+        'Check
+        Dim bmpFiles = Directory.GetFiles(kaomadoExtractPath, "*.bmp", SearchOption.AllDirectories)
+        Assert.AreEqual(2050, bmpFiles.Length, "Failed to extract")
+
+        'Pack
+        Using manager As New UtilityManager
+            manager.RunKaoUtil(kaomadoExtractPath, repackPath, True).Wait()
+        End Using
+
+        'Check
+        Assert.IsTrue(File.Exists(repackPath), "Failed to repack")
+
+        'Extract
+        Using manager As New UtilityManager
+            manager.RunKaoUtil(repackPath, repackExtractPath, True).Wait()
+        End Using
+
+        'Check
+        Dim bmpFiles2 = Directory.GetFiles(repackExtractPath, "*.bmp", SearchOption.AllDirectories)
+        Assert.AreEqual(2050, bmpFiles.Length, "Failed to extract repacked file")
+
+        'Cleanup
+        If Directory.Exists(kaomadoExtractPath) Then
+            Directory.Delete(kaomadoExtractPath, True)
+        End If
+
+        If File.Exists(repackPath) Then
+            File.Delete(repackPath)
+        End If
+
+        If File.Exists(repackExtractPath) Then
+            Directory.Delete(repackExtractPath, True)
+        End If
+    End Sub
+
+    <TestMethod> Public Sub RunKaoUtil_PNG()
+        Dim kaomadoFilename = Path.Combine(romDir, "data", "font", "kaomado.kao")
+        Dim kaomadoExtractPath = "kao_png"
+        Dim repackPath = "repackedKaomato_png.kao"
+        Dim repackExtractPath = "kao_png2"
+
+        'Extract
+        Using manager As New UtilityManager
+            manager.RunKaoUtil(kaomadoFilename, kaomadoExtractPath, False).Wait()
+        End Using
+
+        'Check
+        Dim bmpFiles = Directory.GetFiles(kaomadoExtractPath, "*.png", SearchOption.AllDirectories)
+        Assert.AreEqual(2050, bmpFiles.Length, "Failed to extract")
+
+        'Pack
+        Using manager As New UtilityManager
+            manager.RunKaoUtil(kaomadoExtractPath, repackPath, False).Wait()
+        End Using
+
+        'Check
+        Assert.IsTrue(File.Exists(repackPath), "Failed to repack")
+
+        'Extract
+        Using manager As New UtilityManager
+            manager.RunKaoUtil(repackPath, repackExtractPath, False).Wait()
+        End Using
+
+        'Check
+        Dim bmpFiles2 = Directory.GetFiles(repackExtractPath, "*.png", SearchOption.AllDirectories)
+        Assert.AreEqual(2050, bmpFiles.Length, "Failed to extract repacked file")
+
+        'Cleanup
+        If Directory.Exists(kaomadoExtractPath) Then
+            Directory.Delete(kaomadoExtractPath, True)
+        End If
+
+        If File.Exists(repackPath) Then
+            File.Delete(repackPath)
+        End If
+
+        If File.Exists(repackExtractPath) Then
+            Directory.Delete(repackExtractPath, True)
+        End If
+    End Sub
+
 End Class

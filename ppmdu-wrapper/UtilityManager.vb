@@ -255,6 +255,33 @@ Public Class UtilityManager
 
         File.Delete(tempFilename)
     End Function
+
+    ''' <summary>
+    ''' Runs Kaoutil
+    ''' </summary>
+    ''' <param name="sourcePath">The source path for the operation.  The kao file for extracts, the directory for packs.</param>
+    ''' <param name="destinationPath">The destination path for the operation.  The directory for extracks, the kao file for packs.</param>
+    ''' <param name="bitmaps">True to use indexed bitmap files.  False to use indexed PNG files.</param>
+    ''' <param name="facenamesFilename">Optional file containing the names of the faces.  Pass in null for default.</param>
+    ''' <param name="pokemonNamesFilename">Optional file containing the names of the Pokemon.  Pass in null for default.</param>
+    Public Async Function RunKaoUtil(sourcePath As String, destinationPath As String, bitmaps As Boolean, Optional facenamesFilename As String = Nothing, Optional pokemonNamesFilename As String = Nothing) As Task
+        If facenamesFilename Is Nothing Then
+            facenamesFilename = Path_Facenames
+        End If
+
+        If pokemonNamesFilename Is Nothing Then
+            pokemonNamesFilename = Path_Pokenames
+        End If
+
+        Dim bmpArg As String
+        If bitmaps Then
+            bmpArg = " -bmp"
+        Else
+            bmpArg = ""
+        End If
+
+        Await RunProgram(Path_KaoUtil, $"-fn ""{AbsolutizePath(facenamesFilename)}"" -pn ""{AbsolutizePath(pokemonNamesFilename)}""{bmpArg} ""{AbsolutizePath(sourcePath)}"" ""{AbsolutizePath(destinationPath)}""")
+    End Function
 #End Region
 
 #Region "IDisposable Support"
