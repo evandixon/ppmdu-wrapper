@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ppmdu-wrapper</id>
+    <version>$version$</version>
+    <title>ppmdu-wrapper</title>
+    <authors>evandixon</authors>
+    <owners>evandixon</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Wrapper for psy_commando's ppmdu</description>
+    <copyright>Copyright 2017</copyright>
+  </metadata>
+</package>
