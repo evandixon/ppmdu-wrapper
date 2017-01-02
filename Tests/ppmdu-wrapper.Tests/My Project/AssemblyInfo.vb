@@ -8,10 +8,10 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("ppmdu-wrapper.IntegrationTests")>
+<Assembly: AssemblyTitle("ppmdu-wrapper.Tests")>
 <Assembly: AssemblyDescription("")>
 <Assembly: AssemblyCompany("")>
-<Assembly: AssemblyProduct("ppmdu-wrapper.IntegrationTests")>
+<Assembly: AssemblyProduct("ppmdu-wrapper.Tests")>
 <Assembly: AssemblyCopyright("Copyright ©  2016")>
 <Assembly: AssemblyTrademark("")>
 

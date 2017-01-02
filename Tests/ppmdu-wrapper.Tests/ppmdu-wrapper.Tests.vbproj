@@ -5,8 +5,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6FF9DD72-7D32-4199-9DA0-F3E0EF0FE230}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>ppmdu_wrapper.IntegrationTests</RootNamespace>
-    <AssemblyName>ppmdu-wrapper.IntegrationTests</AssemblyName>
+    <RootNamespace>ppmdu_wrapper.Tests</RootNamespace>
+    <AssemblyName>ppmdu-wrapper.Tests</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
@@ -23,7 +23,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>ppmdu-wrapper.IntegrationTests.xml</DocumentationFile>
+    <DocumentationFile>ppmdu-wrapper.Tests.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -32,7 +32,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>ppmdu-wrapper.IntegrationTests.xml</DocumentationFile>
+    <DocumentationFile>ppmdu-wrapper.Tests.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
