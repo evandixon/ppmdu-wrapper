@@ -34,9 +34,12 @@ Imports PPMDU
     End Sub
 
     <TestCleanup> Public Sub Cleanup()
-        File.Delete(romFilename)
-        Directory.Delete(romDir, True)
-
+        If File.Exists(romFilename) Then
+            File.Delete(romFilename)
+        End If
+        If Directory.Exists(romDir) Then
+            Directory.Delete(romDir, True)
+        End If
         If File.Exists(destDec) Then
             File.Delete(destDec)
         End If
