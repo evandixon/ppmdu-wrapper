@@ -1,8 +1,13 @@
 ﻿Imports System.IO
 Imports System.Text
+Imports System.Threading
 
 Public Class UtilityManager
     Implements IDisposable
+
+    Public Sub New()
+        ResetToolDirectory()
+    End Sub
 
     Private Function AbsolutizePath(path As String) As String
         If IO.Path.IsPathRooted(path) Then
@@ -82,7 +87,7 @@ Public Class UtilityManager
                 Exit Sub
             End If
 
-            _toolDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PPMDU Wrapper-" & Guid.NewGuid.ToString)
+            _toolDirectory = Path.Combine(Path.GetTempPath, "PPMDU Wrapper-" & Guid.NewGuid.ToString)
             If Directory.Exists(_toolDirectory) Then
                 ResetToolDirectory()
             Else
@@ -294,7 +299,18 @@ Public Class UtilityManager
                 ' TODO: dispose managed state (managed objects).
 
                 If _toolDirectory IsNot Nothing AndAlso Directory.Exists(_toolDirectory) Then
-                    Directory.Delete(_toolDirectory, True)
+                    'Try to delete the tool directory
+                    Try
+                        Directory.Delete(_toolDirectory, True)
+                    Catch ex As Exception
+                        'If it fails, wait and try again
+                        Thread.Sleep(500)
+                        Try
+                            Directory.Delete(_toolDirectory, True)
+                        Catch ex2 As Exception
+                            'If it fails again, leave the tool directory where it is; it's in the temp directory and may be cleaned up later
+                        End Try
+                    End Try
                 End If
             End If
 
