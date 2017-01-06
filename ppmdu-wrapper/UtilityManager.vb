@@ -223,16 +223,13 @@ Public Class UtilityManager
         Await RunProgram(Path_StatsUtil, args.ToString.Trim)
     End Function
 
-    Public Async Function UnPX(compressedFilename As String, outputFilename As String) As Task
+    Public Async Function RunUnPX(compressedFilename As String, outputFilename As String) As Task
         Await RunProgram(Path_UnPX, $"-fext ""{Path.GetExtension(outputFilename).TrimStart(".")}"" ""{AbsolutizePath(compressedFilename)}"" ""{AbsolutizePath(outputFilename)}""")
     End Function
 
     Dim _doPxTempDirectoryCreateLock As New Object
-    Public Async Function DoPX(uncompressedFilename As String, outputFilename As String, format As PXFormat) As Task
-        Dim tempFilename As String = Path.Combine(ToolDirectory, "DoPX-Temp-" & Guid.NewGuid.ToString)
+    Private Function GetDoPXTempDirectory() As String
         Dim tempDirectory As String = Path.Combine(ToolDirectory, "Compressed")
-        Dim tempOutput As String = Path.Combine(tempDirectory, Path.GetFileName(tempFilename))
-
         If Not Directory.Exists(tempDirectory) Then 'Check to see if the directory is missing
             SyncLock _doPxTempDirectoryCreateLock 'Only one thread can create it
                 If Not Directory.Exists(tempDirectory) Then 'Check again in case another thread already did it
@@ -240,6 +237,11 @@ Public Class UtilityManager
                 End If
             End SyncLock
         End If
+        Return tempDirectory
+    End Function
+
+    Private Function GetDoPXOutputTempFilename(format As PXFormat) As String
+        Dim tempOutput As String = Path.Combine(GetDoPXTempDirectory, Path.GetFileName("DoPX-Temp-" & Guid.NewGuid.ToString))
 
         Select Case format
             Case PXFormat.NotSpecified
@@ -251,14 +253,42 @@ Public Class UtilityManager
             Case Else
                 Throw New NotSupportedException("Only AT4PX and PKDPX compression formats are supported.")
         End Select
+        Return tempOutput
+    End Function
 
-        File.Copy(uncompressedFilename, tempFilename)
+    Public Async Function RunDoPX(uncompressedFilename As String, outputFilename As String, format As PXFormat) As Task
+        'Set up the output file
+        Dim tempOutput = GetDoPXOutputTempFilename(format)
 
-        Await RunProgram(Path_DoPX, $"""{tempFilename}"" ""{tempOutput}""")
+        'Read the data
+        Await RunProgram(Path_DoPX, $"""{AbsolutizePath(uncompressedFilename)}"" ""{tempOutput}""")
 
+        'Copy the file to the requested destination
         File.Copy(tempOutput, outputFilename, True)
 
-        File.Delete(tempFilename)
+        'Cleanup
+        File.Delete(tempOutput)
+    End Function
+
+    Public Async Function RunDoPX(uncompressedData As Byte(), format As PXFormat) As Task(Of Byte())
+        'Create a temporary file
+        Dim tempUncompressedFilename = Path.GetTempFileName
+        File.WriteAllBytes(tempUncompressedFilename, uncompressedData)
+
+        'Set up the output file
+        Dim tempOutput = GetDoPXOutputTempFilename(format)
+
+        'Compress the data
+        Await RunProgram(Path_DoPX, $"""{tempUncompressedFilename}"" ""{tempOutput}""")
+
+        'Read the data
+        Dim data = File.ReadAllBytes(tempOutput)
+
+        'Cleanup
+        File.Delete(tempUncompressedFilename)
+        File.Delete(tempOutput)
+
+        Return data
     End Function
 
     ''' <summary>

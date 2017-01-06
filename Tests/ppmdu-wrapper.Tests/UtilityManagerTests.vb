@@ -66,7 +66,7 @@ Imports PPMDU
 
         'Test UnPX
         Using manager As New UtilityManager
-            manager.UnPX(source, destDec).Wait()
+            manager.RunUnPX(source, destDec).Wait()
         End Using
 
         'Check UnPX
@@ -90,7 +90,7 @@ Imports PPMDU
 
         'Test DoPX AT4PX
         Using manager As New UtilityManager
-            manager.DoPX(destDec, destCompAT4PX, PXFormat.AT4PX).Wait()
+            manager.RunDoPX(destDec, destCompAT4PX, PXFormat.AT4PX).Wait()
 
             'First DoPX AT4PX Check
             Assert.IsTrue(File.Exists(destCompAT4PX), "Failed to create compressed AT4PX file.")
@@ -98,7 +98,7 @@ Imports PPMDU
             Assert.AreEqual("AT4PX", Encoding.ASCII.GetString(rawData, 0, 5))
 
             'Prep for second check
-            manager.UnPX(destCompAT4PX, destDecAT4PX).Wait()
+            manager.RunUnPX(destCompAT4PX, destDecAT4PX).Wait()
         End Using
 
         'Second DoPX AT4PX Check
@@ -126,7 +126,7 @@ Imports PPMDU
 
         'Test DoPX PKDPX
         Using manager As New UtilityManager
-            manager.DoPX(destDec, destCompPKDPX, PXFormat.PKDPX).Wait()
+            manager.RunDoPX(destDec, destCompPKDPX, PXFormat.PKDPX).Wait()
 
             'First DoPX AT4PX Check
             Assert.IsTrue(File.Exists(destCompPKDPX), "Failed to create compressed PKDPX file.")
@@ -134,7 +134,7 @@ Imports PPMDU
             Assert.AreEqual("PKDPX", Encoding.ASCII.GetString(rawData, 0, 5))
 
             'Prep for second check
-            manager.UnPX(destCompPKDPX, destDecPKDPX).Wait()
+            manager.RunUnPX(destCompPKDPX, destDecPKDPX).Wait()
         End Using
 
         'Second DoPX AT4PX Check
@@ -148,6 +148,16 @@ Imports PPMDU
         'Cleanup
         File.Delete(destCompPKDPX)
         File.Delete(destDecPKDPX)
+    End Sub
+
+    <TestMethod()> Public Sub RunDoPxFromMemory()
+        'Test DoPX PKDPX
+        Dim decompressedData As Byte()
+        Using manager As New UtilityManager
+            Dim compressedData = File.ReadAllBytes(Path.Combine(romDir, "data", "BACK", "n_logo.bgp"))
+            decompressedData = manager.RunDoPX(compressedData, PXFormat.PKDPX).Result
+            Assert.AreEqual("PKDPX", Encoding.ASCII.GetString(decompressedData, 0, 5))
+        End Using
     End Sub
 
     <TestMethod> Public Sub RunKaoUtil_BMP()
