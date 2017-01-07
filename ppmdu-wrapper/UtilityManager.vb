@@ -1,4 +1,5 @@
-﻿Imports System.IO
+﻿Imports System.Collections.Concurrent
+Imports System.IO
 Imports System.Text
 Imports System.Threading
 
@@ -240,19 +241,31 @@ Public Class UtilityManager
         Return tempDirectory
     End Function
 
+    Dim _doPxTempID As Integer = 0
+    Dim _doPxTempIDLock As New Object
     Private Function GetDoPXOutputTempFilename(format As PXFormat) As String
-        Dim tempOutput As String = Path.Combine(GetDoPXTempDirectory, Path.GetFileName("DoPX-Temp-" & Guid.NewGuid.ToString))
+        Dim tempOutput As String
+        SyncLock _doPxTempIDLock
+            tempOutput = Path.Combine(GetDoPXTempDirectory, Path.GetFileName("DoPX-Temp-" & _doPxTempID.ToString))
 
-        Select Case format
-            Case PXFormat.NotSpecified
-                tempOutput &= ".bin"
-            Case PXFormat.AT4PX
-                tempOutput &= ".at4px"
-            Case PXFormat.PKDPX
-                tempOutput &= ".pkdpx"
-            Case Else
-                Throw New NotSupportedException("Only AT4PX and PKDPX compression formats are supported.")
-        End Select
+            If _doPxTempID = Integer.MaxValue Then
+                _doPxTempID = Integer.MinValue
+            Else
+                _doPxTempID += 1
+            End If
+
+            Select Case format
+                Case PXFormat.NotSpecified
+                    tempOutput &= ".bin"
+                Case PXFormat.AT4PX
+                    tempOutput &= ".at4px"
+                Case PXFormat.PKDPX
+                    tempOutput &= ".pkdpx"
+                Case Else
+                    Throw New NotSupportedException("Only AT4PX and PKDPX compression formats are supported.")
+            End Select
+        End SyncLock
+
         Return tempOutput
     End Function
 
