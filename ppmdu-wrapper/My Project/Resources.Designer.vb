@@ -22,7 +22,7 @@ Namespace My.Resources
     '''<summary>
     '''  A strongly-typed resource class, for looking up localized strings, etc.
     '''</summary>
-    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0"),  _
+    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0"),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
      Global.Microsoft.VisualBasic.HideModuleNameAttribute()>  _
@@ -115,8 +115,7 @@ Namespace My.Resources
         '''  &lt;!--Layout:--&gt;
         '''  &lt;!--Its made of the following structure this far : --&gt;
         '''  &lt;!--&lt;PMD2&gt;--&gt;
-        '''  &lt;!--  &lt;GameEditions /&gt;--&gt;
-        '''  &lt;!-- [rest of string was truncated]&quot;;.
+        '''  &lt;!--  &lt;GameEditions / [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property pmd2data() As String
             Get
@@ -136,7 +135,7 @@ Namespace My.Resources
         '''    This is useful, because most of the time, the presets in the games do not match a specific midi preset. So a trumpet in a game might 
         '''    be a bagpipe in midi for example! 
         '''
-        '''    And it gets even worse with drumkits. Th [rest of string was truncated]&quot;;.
+        '''    And it gets even worse with d [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property pmd2eos_cvinfo() As String
             Get
@@ -157,7 +156,7 @@ Namespace My.Resources
         '''      &lt;!--**********************************************--&gt;
         '''      &lt;GameVariablesTable&gt;
         '''        &lt;GameVar type=&quot;8&quot; unk1=&quot;2&quot; memoffset=&quot;  0x0&quot; bitshift=&quot;0x0&quot; unk3=&quot;  0x1&quot; unk4=&quot;0x1&quot; name=&quot;VERSION&quot; /&gt;
-        '''        &lt;GameVar type=&quot;8&quot; unk1=&quot;2&quot; memoffset=&quot;  0x4&quot; bitshift=&quot;0x [rest of string was truncated]&quot;;.
+        '''        &lt;GameVar type=&quot;8&quot; unk1=&quot;2&quot; memoffset=&quot;  0x4&quot;  [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property pmd2scriptdata() As String
             Get
@@ -220,13 +219,7 @@ Namespace My.Resources
         '''dugtrio
         '''meowth
         '''persian
-        '''psyduck
-        '''golduck
-        '''mankey
-        '''primeape
-        '''growlithe
-        '''arcanine
-        '''poli [rest of string was truncated]&quot;;.
+        '''p [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property pokenames() As String
             Get
