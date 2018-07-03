@@ -64,6 +64,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExecutionResult.vb" />
+    <Compile Include="Language.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Language.resx</DependentUpon>
+    </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -81,9 +87,15 @@
     </Compile>
     <Compile Include="PXFormat.vb" />
     <Compile Include="StatsUtilOptions.vb" />
+    <Compile Include="UnsuccessfulExitCodeException.vb" />
     <Compile Include="UtilityManager.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Language.resx">
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Language.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>

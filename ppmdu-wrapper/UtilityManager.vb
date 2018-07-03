@@ -28,7 +28,7 @@ Public Class UtilityManager
     ''' <returns></returns>
     Public Property OutputConsoleOutput As Boolean = True
 
-    Private Async Function RunProgram(program As String, arguments As String) As Task
+    Private Async Function RunProgram(program As String, arguments As String) As Task(Of ExecutionResult)
         Dim handlersRegistered As Boolean = False
 
         Dim p As New Process
@@ -58,6 +58,8 @@ Public Class UtilityManager
             RemoveHandler p.OutputDataReceived, AddressOf OnInputRecieved
             RemoveHandler p.ErrorDataReceived, AddressOf OnInputRecieved
         End If
+
+        Return New ExecutionResult With {.ExitCode = p.ExitCode, .ProgramName = Path.GetFileName(program)}
     End Function
 
     Private Sub OnInputRecieved(sender As Object, e As DataReceivedEventArgs)
@@ -221,11 +223,13 @@ Public Class UtilityManager
         args.Append(AbsolutizePath(xmlPath))
         args.Append("""")
 
-        Await RunProgram(Path_StatsUtil, args.ToString.Trim)
+        Dim result = Await RunProgram(Path_StatsUtil, args.ToString.Trim)
+        result.EnsureExitCodeSuccessful()
     End Function
 
     Public Async Function RunUnPX(compressedFilename As String, outputFilename As String) As Task
-        Await RunProgram(Path_UnPX, $"-fext ""{Path.GetExtension(outputFilename).TrimStart(".")}"" ""{AbsolutizePath(compressedFilename)}"" ""{AbsolutizePath(outputFilename)}""")
+        Dim result = Await RunProgram(Path_UnPX, $"-fext ""{Path.GetExtension(outputFilename).TrimStart(".")}"" ""{AbsolutizePath(compressedFilename)}"" ""{AbsolutizePath(outputFilename)}""")
+        result.EnsureExitCodeSuccessful()
     End Function
 
     Dim _doPxTempDirectoryCreateLock As New Object
@@ -274,7 +278,8 @@ Public Class UtilityManager
         Dim tempOutput = GetDoPXOutputTempFilename(format)
 
         'Read the data
-        Await RunProgram(Path_DoPX, $"""{AbsolutizePath(uncompressedFilename)}"" ""{tempOutput}""")
+        Dim result = Await RunProgram(Path_DoPX, $"""{AbsolutizePath(uncompressedFilename)}"" ""{tempOutput}""")
+        result.EnsureExitCodeSuccessful()
 
         'Copy the file to the requested destination
         File.Copy(tempOutput, outputFilename, True)
@@ -292,7 +297,8 @@ Public Class UtilityManager
         Dim tempOutput = GetDoPXOutputTempFilename(format)
 
         'Compress the data
-        Await RunProgram(Path_DoPX, $"""{tempUncompressedFilename}"" ""{tempOutput}""")
+        Dim result = Await RunProgram(Path_DoPX, $"""{tempUncompressedFilename}"" ""{tempOutput}""")
+        result.EnsureExitCodeSuccessful()
 
         'Read the data
         Dim data = File.ReadAllBytes(tempOutput)
@@ -328,7 +334,8 @@ Public Class UtilityManager
             bmpArg = ""
         End If
 
-        Await RunProgram(Path_KaoUtil, $"-fn ""{AbsolutizePath(facenamesFilename)}"" -pn ""{AbsolutizePath(pokemonNamesFilename)}""{bmpArg} ""{AbsolutizePath(sourcePath)}"" ""{AbsolutizePath(destinationPath)}""")
+        Dim result = Await RunProgram(Path_KaoUtil, $"-fn ""{AbsolutizePath(facenamesFilename)}"" -pn ""{AbsolutizePath(pokemonNamesFilename)}""{bmpArg} ""{AbsolutizePath(sourcePath)}"" ""{AbsolutizePath(destinationPath)}""")
+        result.EnsureExitCodeSuccessful()
     End Function
 #End Region
 
